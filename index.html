@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrolle nach unten!</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    overflow-x: hidden;
+  }
+  .line {
+    padding: 20px 0;
+    border-bottom: 1px solid #111;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+  const container = document.getElementById('container');
+  const text = "scrolle nach unten!";
+  let count = 0;
+
+  function addLines(n) {
+    for (let i = 0; i < n; i++) {
+      const div = document.createElement('div');
+      div.className = 'line';
+      div.textContent = text;
+      // kleiner Siri-Glow Effekt alle 10 Zeilen
+      if (count % 10 === 0) {
+        div.style.color = `hsl(${count % 360}, 100%, 70%)`;
+        div.style.textShadow = `0 0 20px hsl(${count % 360}, 100%, 70%)`;
+      }
+      container.appendChild(div);
+      count++;
+    }
+  }
+
+  // Initial: 100 Zeilen
+  addLines(100);
+
+  // Unendlich nachladen beim Scrollen
+  window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+      addLines(50);
+    }
+  });
+
+  // Auch wenn man am Anfang schon am Ende ist
+  setInterval(() => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+      addLines(20);
+    }
+  }, 100);
+</script>
+</body>
+</html>
