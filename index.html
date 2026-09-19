@@ -3,68 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scrolle nach unten!</title>
+<title>unendlich</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
   body {
+    margin: 0;
     background: #000;
     color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
+    font-family: monospace;
+    font-size: 22px;
+    line-height: 1;
+  }
+ .line {
+    padding: 18px 0;
     text-align: center;
-    overflow-x: hidden;
+    border-bottom: 1px solid #0a0a0a;
+    will-change: transform;
   }
-  .line {
-    padding: 20px 0;
-    border-bottom: 1px solid #111;
-    animation: fadeIn 0.2s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  #sentinel { height: 1px; }
 </style>
 </head>
 <body>
-<div id="container"></div>
+<div id="list"></div>
+<div id="sentinel"></div>
 
 <script>
-  const container = document.getElementById('container');
-  const text = "scrolle nach unten!";
-  let count = 0;
+  const list = document.getElementById('list');
+  const sentinel = document.getElementById('sentinel');
 
   function addLines(n) {
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < n; i++) {
       const div = document.createElement('div');
       div.className = 'line';
-      div.textContent = text;
-      // kleiner Siri-Glow Effekt alle 10 Zeilen
-      if (count % 10 === 0) {
-        div.style.color = `hsl(${count % 360}, 100%, 70%)`;
-        div.style.textShadow = `0 0 20px hsl(${count % 360}, 100%, 70%)`;
-      }
-      container.appendChild(div);
-      count++;
+      div.textContent = 'scrolle nach unten!';
+      frag.appendChild(div);
     }
+    list.appendChild(frag);
   }
 
-  // Initial: 100 Zeilen
-  addLines(100);
+  // Start mit 200 Zeilen damit man direkt scrollen kann
+  addLines(200);
 
-  // Unendlich nachladen beim Scrollen
-  window.addEventListener('scroll', () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-      addLines(50);
+  // Der Trick für echtes unendlich ohne Springen: IntersectionObserver
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      addLines(100);
     }
-  });
+  }, { rootMargin: '1000px' });
 
-  // Auch wenn man am Anfang schon am Ende ist
-  setInterval(() => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-      addLines(20);
-    }
-  }, 100);
+  observer.observe(sentinel);
 </script>
 </body>
 </html>
